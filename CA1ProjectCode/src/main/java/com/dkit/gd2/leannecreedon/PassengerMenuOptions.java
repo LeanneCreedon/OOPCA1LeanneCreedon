@@ -1,0 +1,15 @@
+package com.dkit.gd2.leannecreedon;
+
+public enum PassengerMenuOptions {
+
+    /* SYSTEM PASSENGER MENU OPTIONS */
+
+    PRINT_MENU,
+    ADD_PASSENGER,
+    EDIT_PASSENGER,
+    DELETE_PASSENGER,
+    PRINT_PASSENGER_DETAILS,
+    CURRENT_PASSENGER_BOOKINGS,
+    PASSENGER_BOOKINGS_DATETIME_ORDER,
+    BACK_TO_MAIN_MENU;
+}
