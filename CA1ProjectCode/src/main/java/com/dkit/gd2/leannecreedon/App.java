@@ -13,7 +13,6 @@ public class App
     {
         System.out.println("Welcome to Tesla Co. Booking system");
         mainMenu();
-
     }
 
     public static void mainMenu ()
@@ -29,9 +28,6 @@ public class App
 
             switch (selectedOption)
             {
-                case PRINT_MENU:
-                    printMainMenu();
-                    break;
                 case PRINT_BOOKINGS_MENU:
                     printBookingsMenu();
                     bookingsMenu();
@@ -129,8 +125,7 @@ public class App
 
     private static void printMainMenu() {
         System.out.println("\nMain Menu:");
-        System.out.println("0 - print choices\n"
-                            + "1 - booking menu\n"
+        System.out.println("1 - booking menu\n"
                             + "2 - passenger menu\n"
                             + "3 - quit");
     }
@@ -160,6 +155,7 @@ public class App
                             + "7 - main menu");
 
     }
+
 
     // Booking Menu Methods
 
@@ -193,12 +189,16 @@ public class App
         System.out.println("AVERAGE BOOKING JOURNEY LENGTH");
     }
 
-
     // Passenger Menu Methods
 
     private static void addNewPassenger()
     {
-        System.out.println("ADD NEW PASSENGER");
+        String name = getUserInput("Enter passenger name: ");
+        String email = getUserInput("Enter email address: ");
+        String telephone = getUserInput("Enter phone number: ");
+        PositionTracker homePos = new PositionTracker(getUserInputPosition("Enter latitude: "),getUserInputPosition("Enter longitude: "));
+
+        PassengerInfo newPassenger = PassengerInfo.loadPassengersFromFile(name, IDSystem.getInstance("idSystem.txt").getNextId(), email, telephone, homePos);
     }
 
     private static void editPassenger()
@@ -211,9 +211,10 @@ public class App
         System.out.println("DELETE PASSENGER");
     }
 
-    private static void printPassengerDetails()
+    private static void printPassengerDetails(PassengerInfo passengers)
     {
         System.out.println("PRINT PASSENGER DETAILS");
+        passengers.displayAllPassengers();
     }
 
     private static void currentPassengerBookings()
@@ -232,5 +233,11 @@ public class App
     {
         System.out.println(message);
         return keyboard.nextLine();
+    }
+
+    private static double getUserInputPosition(String message)
+    {
+        System.out.println(message);
+        return keyboard.nextDouble();
     }
 }

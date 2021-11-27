@@ -1,26 +1,34 @@
 package com.dkit.gd2.leannecreedon;
 
-public class Passenger {
+
+public class Passenger implements Comparable<Passenger> {
 
     /* Attributes */
 
     private String name;
-    private String ID;
+    private int id;
     private String email;
     private String telephone;
-    private double homeLatitude;
-    private double homeLongitude;
+    private PositionTracker homePosition;
+
+    private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
     // Constructor
 
-    public Passenger(String name, String ID, String email, String telephone, double homeLatitude, double homeLongitude)
-    {
+    public Passenger(String name, String email, String telephone, double homeLatitude, double homeLongitude) {
         this.name = name;
-        this.ID = ID;
+        this.id = idSystem.getNextId();
         this.email = email;
         this.telephone = telephone;
-        this.homeLatitude = homeLatitude;
-        this.homeLongitude = homeLongitude;
+        this.homePosition = new PositionTracker(homeLatitude, homeLongitude);
+    }
+
+    public Passenger(String name, int id, String email, String telephone, double homeLatitude, double homeLongitude) {
+        this.name = name;
+        this.id = id;
+        this.email = email;
+        this.telephone = telephone;
+        this.homePosition = new PositionTracker(homeLatitude, homeLongitude);
     }
 
     // Getters
@@ -29,8 +37,8 @@ public class Passenger {
         return name;
     }
 
-    public String getID() {
-        return ID;
+    public int getID() {
+        return id;
     }
 
     public String getEmail() {
@@ -41,23 +49,35 @@ public class Passenger {
         return telephone;
     }
 
-    public double getHomeLatitude() {
-        return homeLatitude;
+    public PositionTracker getHomePosition() {
+        return homePosition;
     }
 
-    public double getHomeLongitude() {
-        return homeLongitude;
+    public static Passenger createNewPassenger(String name, int id, String email, String telephone, double latitude, double longitude)
+    {
+        return new Passenger(name, id, email, telephone, latitude, longitude);
     }
+
+
+    // Implements Comparable Method
+
+    @Override
+    public int compareTo(Passenger otherPassenger)
+    {
+        return this.name.compareToIgnoreCase(otherPassenger.name);
+    }
+
+    // ToString Method
 
     @Override
     public String toString() {
         return "Passenger{" +
                 "name='" + name + '\'' +
-                ", ID='" + ID + '\'' +
+                ", ID='" + id + '\'' +
                 ", email='" + email + '\'' +
                 ", telephone='" + telephone + '\'' +
-                ", homeLatitude=" + homeLatitude +
-                ", homeLongitude=" + homeLongitude +
+                ", homePosition=" + homePosition +
                 '}';
     }
+
 }

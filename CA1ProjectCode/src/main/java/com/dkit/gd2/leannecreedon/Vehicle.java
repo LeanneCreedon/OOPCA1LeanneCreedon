@@ -12,8 +12,7 @@ public class Vehicle {
     private double costPerMile;
     private String lastServicedDate;
     private int mileage;
-    private double vehicleDepotLatitude;
-    private double vehicleDepotLongitude;
+    private PositionTracker vehicleDepotPosition;
 
     // Constructor
 
@@ -30,8 +29,7 @@ public class Vehicle {
         this.costPerMile = costPerMile;
         this.lastServicedDate = lastServicedDate;
         this.mileage = mileage;
-        this.vehicleDepotLatitude = 0.0;
-        this.vehicleDepotLongitude = 0.0;
+        this.vehicleDepotPosition = new PositionTracker(vehicleDepotLatitude,vehicleDepotLongitude);
     }
 
     // Getters
@@ -68,12 +66,9 @@ public class Vehicle {
         return mileage;
     }
 
-    public double getVehicleDepotLatitude() {
-        return vehicleDepotLatitude;
-    }
-
-    public double getVehicleDepotLongitude() {
-        return vehicleDepotLongitude;
+    public PositionTracker getVehicleDepotPosition()
+    {
+        return vehicleDepotPosition;
     }
 
     @Override
@@ -87,8 +82,7 @@ public class Vehicle {
                 ", costPerMile=" + costPerMile +
                 ", lastServicedDate='" + lastServicedDate + '\'' +
                 ", mileage=" + mileage +
-                ", vehicleDepotLatitude=" + vehicleDepotLatitude +
-                ", vehicleDepotLongitude=" + vehicleDepotLongitude +
+                ", vehicleDepotPosition=" + vehicleDepotPosition +
                 '}';
     }
 }
