@@ -1,38 +1,65 @@
 package com.dkit.gd2.leannecreedon;
 
+
+import java.time.LocalDate;
+
 public class Vehicle {
 
-    /* Attributes */
+    private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
+    /* Attributes */
+    private int id;
+    private String type;
     private String make;
     private String model;
-    private int milesPerKWh;
-    private int numberOfSeats;
+    private double milesPerKWh;
     private String registrationNumber;
     private double costPerMile;
-    private String lastServicedDate;
+    private LocalDate lastServicedDate;
     private int mileage;
     private PositionTracker vehicleDepotPosition;
 
     // Constructor
 
-    public Vehicle(String make, String model, int milesPerKWh, int numberOfSeats,
-                   String registrationNumber, double costPerMile,
-                   String lastServicedDate, int mileage, double vehicleDepotLatitude,
-                   double vehicleDepotLongitude)
+    public Vehicle(String type, String make, String model, double milesPerKWh, String registrationNumber,
+                   double costPerMile, int year, int month, int day, int mileage, double latitude, double longitude)
     {
+        this.id = idSystem.getNextId();
+        this.type = type;
         this.make = make;
         this.model = model;
         this.milesPerKWh = milesPerKWh;
-        this.numberOfSeats = numberOfSeats;
         this.registrationNumber = registrationNumber;
         this.costPerMile = costPerMile;
-        this.lastServicedDate = lastServicedDate;
+        this.lastServicedDate = LocalDate.of(year, month,day);
         this.mileage = mileage;
-        this.vehicleDepotPosition = new PositionTracker(vehicleDepotLatitude,vehicleDepotLongitude);
+        this.vehicleDepotPosition = new PositionTracker(latitude, longitude);
+    }
+
+    public Vehicle(int id, String type, String make, String model, double milesPerKWh, String registrationNumber,
+                   double costPerMile, int year, int month, int day, int mileage, double latitude, double longitude)
+    {
+        this.id = id;
+        this.type = type;
+        this.make = make;
+        this.model = model;
+        this.milesPerKWh = milesPerKWh;
+        this.registrationNumber = registrationNumber;
+        this.costPerMile = costPerMile;
+        this.lastServicedDate = LocalDate.of(year, month,day);
+        this.mileage = mileage;
+        this.vehicleDepotPosition = new PositionTracker(latitude, longitude);
     }
 
     // Getters
+
+    public int getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
 
     public String getMake() {
         return make;
@@ -42,12 +69,8 @@ public class Vehicle {
         return model;
     }
 
-    public int getMilesPerKWh() {
+    public double getMilesPerKWh() {
         return milesPerKWh;
-    }
-
-    public int getNumberOfSeats() {
-        return numberOfSeats;
     }
 
     public String getRegistrationNumber() {
@@ -58,7 +81,7 @@ public class Vehicle {
         return costPerMile;
     }
 
-    public String getLastServicedDate() {
+    public LocalDate getLastServicedDate() {
         return lastServicedDate;
     }
 
@@ -66,21 +89,23 @@ public class Vehicle {
         return mileage;
     }
 
-    public PositionTracker getVehicleDepotPosition()
-    {
+    public PositionTracker getVehicleDepotPosition() {
         return vehicleDepotPosition;
     }
+
 
     @Override
     public String toString() {
         return "Vehicle{" +
-                "make='" + make + '\'' +
+                "idSystem=" + idSystem +
+                ", id=" + id +
+                ", type='" + type + '\'' +
+                ", make='" + make + '\'' +
                 ", model='" + model + '\'' +
                 ", milesPerKWh=" + milesPerKWh +
-                ", numberOfSeats=" + numberOfSeats +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 ", costPerMile=" + costPerMile +
-                ", lastServicedDate='" + lastServicedDate + '\'' +
+                ", lastServicedDate=" + lastServicedDate +
                 ", mileage=" + mileage +
                 ", vehicleDepotPosition=" + vehicleDepotPosition +
                 '}';

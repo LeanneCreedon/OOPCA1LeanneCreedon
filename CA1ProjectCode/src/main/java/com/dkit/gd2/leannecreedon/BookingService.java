@@ -4,14 +4,35 @@ import java.util.ArrayList;
 
 public class BookingService {
 
-    private final ArrayList<VehicleBookings> bookingList;
-    private PassengerInfo passengerInfo;
-    private VehicleManager vehicleManager;
+    private final ArrayList<Booking> bookingList;
+    private Passengers passengers;
+    private Vehicles vehicles;
 
-    public BookingService(ArrayList<VehicleBookings> bookingList, PassengerInfo passengerInfo, VehicleManager vehicleManager)
+    public BookingService(ArrayList<Booking> bookingList, Passengers passengers, Vehicles vehicles)
     {
         this.bookingList = bookingList;
-        this.passengerInfo = passengerInfo;
-        this.vehicleManager = vehicleManager;
+        this.passengers = passengers;
+        this.vehicles = vehicles;
+    }
+
+    public ArrayList<Booking> getBookingList() {
+        return bookingList;
+    }
+
+    public Passengers getPassengers() {
+        return passengers;
+    }
+
+    public Vehicles getVehicles() {
+        return vehicles;
+    }
+
+    @Override
+    public String toString() {
+        return "BookingService{" +
+                "bookingList=" + bookingList +
+                ", passengers=" + passengers +
+                ", vehicles=" + vehicles +
+                '}';
     }
 }

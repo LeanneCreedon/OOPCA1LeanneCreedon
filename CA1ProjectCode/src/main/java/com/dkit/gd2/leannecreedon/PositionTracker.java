@@ -32,9 +32,6 @@ public class PositionTracker {
 
     @Override
     public String toString() {
-        return "PositionTracker{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
+        return "Latitude: " + latitude + ", Longitude: " + longitude;
     }
 }

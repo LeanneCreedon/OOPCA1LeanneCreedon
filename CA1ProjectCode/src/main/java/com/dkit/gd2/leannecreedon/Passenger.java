@@ -1,7 +1,8 @@
 package com.dkit.gd2.leannecreedon;
 
 
-public class Passenger implements Comparable<Passenger> {
+public class Passenger implements Comparable<Passenger>
+{
 
     /* Attributes */
 
@@ -15,20 +16,22 @@ public class Passenger implements Comparable<Passenger> {
 
     // Constructor
 
-    public Passenger(String name, String email, String telephone, double homeLatitude, double homeLongitude) {
+    public Passenger(String name, IDSystem idSystem, String email, String telephone, PositionTracker homePosition)
+    {
         this.name = name;
         this.id = idSystem.getNextId();
         this.email = email;
         this.telephone = telephone;
-        this.homePosition = new PositionTracker(homeLatitude, homeLongitude);
+        this.homePosition = homePosition;
     }
 
-    public Passenger(String name, int id, String email, String telephone, double homeLatitude, double homeLongitude) {
+    public Passenger(String name, int id, String email, String telephone, PositionTracker homePosition)
+    {
         this.name = name;
         this.id = id;
         this.email = email;
         this.telephone = telephone;
-        this.homePosition = new PositionTracker(homeLatitude, homeLongitude);
+        this.homePosition = homePosition;
     }
 
     // Getters
@@ -53,11 +56,29 @@ public class Passenger implements Comparable<Passenger> {
         return homePosition;
     }
 
-    public static Passenger createNewPassenger(String name, int id, String email, String telephone, double latitude, double longitude)
+    public static Passenger createNewPassenger(String name, IDSystem id, String email, String telephone, PositionTracker homePosition)
     {
-        return new Passenger(name, id, email, telephone, latitude, longitude);
+        return new Passenger(name, id, email, telephone, homePosition);
     }
 
+    // Writing user input passengers to passengers.txt file
+//    public static Passengers writeNewPassenger(Passenger passengersList)
+//    {
+//        try (BufferedWriter passengerFile = new BufferedWriter(new FileWriter("passengers.txt")))
+//        {
+//            for (Passenger passenger : this.passengersList)
+//            {
+//                passengerFile.write(passenger.getName() + "," + passenger.getID() + "," +
+//                        passenger.getEmail() + "," + passenger.getTelephone() + "," + passenger.getHomePosition());
+//
+//            }
+//        }
+//        catch(IOException ioe)
+//        {
+//            ioe.printStackTrace();
+//        }
+//        return null;
+//    }
 
     // Implements Comparable Method
 

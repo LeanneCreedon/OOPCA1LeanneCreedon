@@ -1,6 +1,8 @@
 package com.dkit.gd2.leannecreedon;
 
+import java.time.LocalDate;
 import java.util.Scanner;
+
 
 /**
  *  CA1 - Leanne Creedon
@@ -8,6 +10,9 @@ import java.util.Scanner;
 public class App
 {
     private static Scanner keyboard = new Scanner(System.in);
+    private static Passengers passengersList = new Passengers();
+    private static Vehicles vehicles = new Vehicles("vehicles.txt");
+    private static Bookings bookings = new Bookings();
 
     public static void main(String[] args)
     {
@@ -69,13 +74,13 @@ public class App
                     deleteBooking();
                     break;
                 case PRINT_BOOKING_DETAILS:
-                    printBookingDetails();
+                    bookings.printBookingDetails();
                     break;
                 case SEARCH_BY_SEAT_NUM:
-                    searchBySeatNum();
+                    //vehicles.searchBySeatNum();
                     break;
                 case AVERAGE_LENGTH_BOOKING_JOURNEYS:
-                    averageJourneyLength();
+                    //vehicles.averageJourneyLength();
                     break;
                 case BACK_TO_MAIN_MENU:
                     mainMenu();
@@ -99,22 +104,22 @@ public class App
                     printPassengerMenu();
                     break;
                 case ADD_PASSENGER:
-                    addNewPassenger();
+                    addPassenger();
                     break;
                 case EDIT_PASSENGER:
                     editPassenger();
                     break;
                 case DELETE_PASSENGER:
-                    deletePassenger();
+                    removePassenger();
                     break;
                 case PRINT_PASSENGER_DETAILS:
-                    printPassengerDetails();
+                    passengersList.printPassengerDetails();
                     break;
                 case CURRENT_PASSENGER_BOOKINGS:
-                    currentPassengerBookings();
+                    //passengersList.currentPassengerBookings();
                     break;
                 case PASSENGER_BOOKINGS_DATETIME_ORDER:
-                    passengerBookingsDateTimeOrder();
+                    //passengersList.passengerBookingsDateTimeOrder();
                     break;
                 case BACK_TO_MAIN_MENU:
                     mainMenu();
@@ -156,88 +161,180 @@ public class App
 
     }
 
-
-    // Booking Menu Methods
-
-    private static void addNewBooking()
-    {
-        System.out.println("ADD NEW BOOKING");
-    }
-
-    private static void editBooking()
-    {
-        System.out.println("EDIT BOOKING");
-    }
-
-    private static void deleteBooking()
-    {
-        System.out.println("DELETE BOOKING");
-    }
-
-    private static void printBookingDetails()
-    {
-        System.out.println("PRINT BOOKING DETAILS");
-    }
-
-    private static void searchBySeatNum()
-    {
-        System.out.println("SEARCH BOOKING BY SEAT NUM");
-    }
-
-    private static void averageJourneyLength()
-    {
-        System.out.println("AVERAGE BOOKING JOURNEY LENGTH");
-    }
-
     // Passenger Menu Methods
 
-    private static void addNewPassenger()
+    public static void addPassenger()
     {
+        // Creating new Passenger and adding them to the ArrayList(passengerList)
         String name = getUserInput("Enter passenger name: ");
+        IDSystem id = IDSystem.getInstance("idSystem.txt");
         String email = getUserInput("Enter email address: ");
         String telephone = getUserInput("Enter phone number: ");
-        PositionTracker homePos = new PositionTracker(getUserInputPosition("Enter latitude: "),getUserInputPosition("Enter longitude: "));
+        PositionTracker homePos = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
 
-        PassengerInfo newPassenger = PassengerInfo.loadPassengersFromFile(name, IDSystem.getInstance("idSystem.txt").getNextId(), email, telephone, homePos);
+        System.out.println("Got all passenger data. Creating new passenger");
+        Passenger newPassenger = Passenger.createNewPassenger(name, id, email, telephone, homePos);
+        passengersList.addNewPassenger(newPassenger);
+        //Passenger.writeNewPassenger(newPassenger);
     }
 
     private static void editPassenger()
     {
-        System.out.println("EDIT PASSENGER");
+        String name = getUserInput("Enter existing passenger name: ");
+        Passenger existingPassengerRecord = passengersList.searchPassenger(name);
+
+        if(existingPassengerRecord == null)
+        {
+            System.out.println("Passenger not found");
+            return;
+        }
+        String newName = getUserInput("Enter passenger name: ");
+        IDSystem newId = IDSystem.getInstance("idSystem.txt");
+        String newEmail = getUserInput("Enter email address: ");
+        String newTelephone = getUserInput("Enter phone number: ");
+        PositionTracker newHomePos = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
+        Passenger newPassenger = Passenger.createNewPassenger(newName, newId, newEmail, newTelephone, newHomePos);
+
+        if(passengersList.updatePassenger(existingPassengerRecord, newPassenger))
+        {
+            System.out.println("Successfully updated");
+        }
+        else
+        {
+            System.out.println("Could not update passenger");
+        }
     }
 
-    private static void deletePassenger()
-    {
-        System.out.println("DELETE PASSENGER");
+    private static void removePassenger() {
+
+        String name = getUserInput("Enter passenger name to remove: ");
+        Passenger existingPassengerRecord = passengersList.searchPassenger(name);
+        if(existingPassengerRecord == null)
+        {
+            System.out.println("Passenger not found");
+            return;
+        }
+        passengersList.removePassenger(existingPassengerRecord);
     }
 
-    private static void printPassengerDetails(PassengerInfo passengers)
+    // Booking Menu Methods
+
+    public static void addNewBooking()
     {
-        System.out.println("PRINT PASSENGER DETAILS");
-        passengers.displayAllPassengers();
+        String vehicleType = getUserInput("Please enter vehicle type: ");
+        Vehicle existingVehicleRecord = vehicles.searchVehicle(vehicleType);
+        if(existingVehicleRecord == null)
+        {
+            System.out.println("Vehicle not found");
+            return;
+        }
+        String passengerName = getUserInput("Please enter passenger name: ");
+        Passenger existingPassengerRecord = passengersList.searchPassenger(passengerName);
+        if(existingPassengerRecord == null)
+        {
+            System.out.println("Passenger not found");
+            return;
+        }
+        int vehicleID = existingVehicleRecord.getId();
+        int passengerID = existingPassengerRecord.getID();
+
+        IDSystem bookingId = IDSystem.getInstance("idSystem.txt");
+        LocalDate date = LocalDate.of((getUserInputInteger("Enter Year: ")),
+                (getUserInputInteger("Enter Month: ")),(getUserInputInteger("Enter Day: ")));
+        System.out.println("Booking start point:");
+        PositionTracker bookingPosStart = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
+        System.out.println("Booking end point:");
+        PositionTracker bookingPosEnd = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
+        PositionTracker vehicleDepotPos = vehicles.searchVehicleDepot(existingVehicleRecord);
+        double price = bookings.calculatePrice(bookingPosStart, bookingPosEnd, vehicleDepotPos);
+
+        System.out.println("Got all booking data. Creating new booking");
+        Booking newBooking = Booking.createNewBooking(vehicleID, passengerID, bookingId, date, bookingPosStart, bookingPosEnd, price);
+        bookings.addNewBooking(newBooking);
     }
 
-    private static void currentPassengerBookings()
+
+
+    public static void editBooking()
     {
-        System.out.println("CURRENT PASSENGER BOOKINGS");
+        int id = getUserInputInteger("Enter existing booking ID: ");
+        Booking existingBookingRecord = bookings.searchBooking(id);
+
+        if(existingBookingRecord == null)
+        {
+            System.out.println("Booking not found");
+            return;
+        }
+        String vehicleType = getUserInput("Please enter new vehicle type: ");
+        Vehicle newExistingVehicleRecord = vehicles.searchVehicle(vehicleType);
+        if(newExistingVehicleRecord == null)
+        {
+            System.out.println("Vehicle not found");
+            return;
+        }
+        LocalDate newDate = LocalDate.of((getUserInputInteger("Enter Year: ")),
+                (getUserInputInteger("Enter Month: ")),(getUserInputInteger("Enter Day: ")));
+        System.out.println("Booking start point:");
+        PositionTracker newBookingPosStart = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
+        System.out.println("Booking end point:");
+        PositionTracker newBookingPosEnd = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
+        PositionTracker newVehicleDepotPos = vehicles.searchVehicleDepot(newExistingVehicleRecord);
+        double newPrice = bookings.calculatePrice(newBookingPosStart, newBookingPosEnd, newVehicleDepotPos);
+
+        System.out.println("Processing...");
+        Booking updatingBooking = Booking.updateBooking(id, newDate, newBookingPosStart, newBookingPosEnd, newPrice);
+
+        if(bookings.updateBooking(existingBookingRecord, updatingBooking))
+        {
+            System.out.println("Successfully updated");
+        }
+        else
+        {
+            System.out.println("Could not update booking");
+        }
     }
 
-    private static void passengerBookingsDateTimeOrder()
+    public static void deleteBooking()
     {
-        System.out.println("PASSENGER BOOKINGS IN DATE/TIME ORDER");
+        int id = getUserInputInteger("Enter bookingID to remove: ");
+        Booking existingBookingRecord = bookings.searchBooking(id);
+        if(existingBookingRecord == null)
+        {
+            System.out.println("Booking not found");
+            return;
+        }
+        bookings.removeBooking(existingBookingRecord);
     }
+
+    public static void searchBySeatNum()
+    {
+        System.out.println("SEARCH BOOKING BY SEAT NUM");
+    }
+
+    public static void averageJourneyLength()
+    {
+        System.out.println("AVERAGE BOOKING JOURNEY LENGTH");
+    }
+
 
     // Get user input
 
-    private static String getUserInput(String message)
+    public static String getUserInput(String message)
     {
         System.out.println(message);
         return keyboard.nextLine();
     }
 
-    private static double getUserInputPosition(String message)
+    public static double getUserInputDouble(String message)
     {
         System.out.println(message);
-        return keyboard.nextDouble();
+        return Double.parseDouble(keyboard.nextLine());
     }
+
+    public static int getUserInputInteger(String message)
+    {
+        System.out.println(message);
+        return Integer.parseInt(keyboard.nextLine());
+    }
+
 }

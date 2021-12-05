@@ -1,23 +1,34 @@
 package com.dkit.gd2.leannecreedon;
 
+
+
 public class Van extends Vehicle {
 
     /* Attributes */
 
-    private int loadSpace;
+    private double loadSpace;
 
-    public Van(String make, String model, int milesPerKWh, int numberOfSeats,
-               String registrationNumber, double costPerMile, String lastServicedDate,
-               int mileage, double vehicleDepotLatitude, double vehicleDepotLongitude,
-               int loadSpace)
+    // Constructors
+    public Van(String type, String make, String model, double milesPerKWh, String registrationNumber,
+               double costPerMile, int year, int month, int day, int mileage, double latitude,
+               double longitude, double loadSpace)
     {
-        super(make, model, milesPerKWh, numberOfSeats, registrationNumber, costPerMile,
-                lastServicedDate, mileage, vehicleDepotLatitude, vehicleDepotLongitude);
+        super(type, make, model, milesPerKWh, registrationNumber, costPerMile, year, month,
+                day, mileage, latitude, longitude);
         this.loadSpace = loadSpace;
     }
 
-    public int getLoadSpace()
+
+    public Van(int id, String type, String make, String model, double milesPerKWh, String registrationNumber,
+               double costPerMile, int year, int month, int day, int mileage, double latitude,
+               double longitude, double loadSpace)
     {
+        super(id, type, make, model, milesPerKWh, registrationNumber, costPerMile, year, month,
+                day, mileage, latitude, longitude);
+        this.loadSpace = loadSpace;
+    }
+
+    public double getLoadSpace() {
         return loadSpace;
     }
 
