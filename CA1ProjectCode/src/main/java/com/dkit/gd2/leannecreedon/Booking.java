@@ -2,7 +2,8 @@ package com.dkit.gd2.leannecreedon;
 
 import java.time.LocalDate;
 
-public class Booking {
+
+public class Booking  {
 
     private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
@@ -18,10 +19,10 @@ public class Booking {
 
     // Constructor
 
-    public Booking(int passengerID, int vehicleId, IDSystem bookingId, LocalDate bookingDate, PositionTracker bookingStartPosition,
+    public Booking(int passengerId, int vehicleId, IDSystem bookingId, LocalDate bookingDate, PositionTracker bookingStartPosition,
                    PositionTracker bookingEndPosition, double bookingCost)
     {
-        this.passengerId = passengerID;
+        this.passengerId = passengerId;
         this.vehicleId = vehicleId;
         this.bookingId = bookingId.getNextId();
         this.bookingDate = bookingDate;
@@ -30,10 +31,10 @@ public class Booking {
         this.bookingCost = bookingCost;
     }
 
-    public Booking(int passengerID, int vehicleId, int bookingId, LocalDate bookingDate, PositionTracker bookingStartPosition,
+    public Booking(int passengerId, int vehicleId, int bookingId, LocalDate bookingDate, PositionTracker bookingStartPosition,
                    PositionTracker bookingEndPosition, double bookingCost)
     {
-        this.passengerId = passengerID;
+        this.passengerId = passengerId;
         this.vehicleId = vehicleId;
         this.bookingId = bookingId;
         this.bookingDate = bookingDate;
@@ -53,9 +54,7 @@ public class Booking {
     }
 
 
-
     // Getters
-
 
     public IDSystem getIdSystem() {
         return idSystem;
@@ -69,7 +68,8 @@ public class Booking {
         return passengerId;
     }
 
-    public int getVehicleId() {
+    public int getVehicleId()
+    {
         return vehicleId;
     }
 
@@ -119,4 +119,5 @@ public class Booking {
                 ", bookingCost=" + bookingCost +
                 '}';
     }
+
 }

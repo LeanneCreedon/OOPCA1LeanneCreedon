@@ -108,34 +108,30 @@ public class Passengers {
 
     // Passenger Menu Methods Other Versions
 
-    public void addNewPassenger(Passenger newPassenger)
+    public boolean addNewPassenger(Passenger newPassenger)
     {
+        if(findPassenger(newPassenger.getName()) >= 0)
+        {
+            return false;
+        }
         passengersList.add(newPassenger);
+        return true;
     }
 
     public void printPassengerDetails()
     {
         System.out.println("Printing Passenger Details: -\n");
-        System.out.printf("%-25s%-15s%-35s%s%n", "Name", "ID", "Email", "Home Position");
-        for(int i=0; i<111; i++)
+        System.out.printf("%-20s%-15s%-35s%-25s%s%n", "Name", "ID", "Email", "Telephone", "Home Position");
+        for(int i=0; i<130; i++)
         {
             System.out.print('-');
         }
         for (Passenger passenger : passengersList)
         {
-            System.out.printf("%n%-25s%-15s%-35s%s%n", passenger.getName(),passenger.getID(),passenger.getEmail(),passenger.getHomePosition());
+            System.out.printf("%n%-20s%-15s%-35s%-25s%s%n", passenger.getName(),passenger.getID(),passenger.getEmail(),
+                    passenger.getTelephone(),passenger.getHomePosition());
         }
 
-    }
-
-    public static void currentPassengerBookings()
-    {
-        System.out.println("CURRENT PASSENGER BOOKINGS");
-    }
-
-    public static void passengerBookingsDateTimeOrder()
-    {
-        System.out.println("PASSENGER BOOKINGS IN DATE/TIME ORDER");
     }
 
 }

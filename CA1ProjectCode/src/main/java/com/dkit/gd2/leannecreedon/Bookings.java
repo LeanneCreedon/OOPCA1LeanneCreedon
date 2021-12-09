@@ -1,26 +1,38 @@
 package com.dkit.gd2.leannecreedon;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class Bookings
 {
         private ArrayList<Booking> bookingsList = new ArrayList<Booking>();
+        private Passengers passengers;
+        private Vehicles vehicles;
 
-        public Bookings()
-        {
-            this.bookingsList = bookingsList;
+        public Bookings() {
+            this.bookingsList = new ArrayList<>();
+        }
+
+        public Bookings(Passengers passengers, Vehicles vehicles) {
+            this.bookingsList = new ArrayList<>();
+            this.passengers = passengers;
+            this.vehicles = vehicles;
         }
 
         public ArrayList<Booking> getBookingsList() {
             return bookingsList;
         }
 
-        public void addNewBooking(Booking newBooking)
+        public boolean addNewBooking(Booking newBooking)
         {
+            if(findBooking(newBooking.getVehicleId()) >= 0)
+            {
+                return true;
+            }
             bookingsList.add(newBooking);
+            return false;
         }
 
         public boolean updateBooking(Booking oldBooking, Booking newBooking)
@@ -93,7 +105,7 @@ public class Bookings
         }
 
         // Calculating the distances between the different positions
-        public double calculateDistance1(PositionTracker bookingPosStart, PositionTracker vehicleDepotPos)
+        private double calculateDistance1(PositionTracker bookingPosStart, PositionTracker vehicleDepotPos)
         {
             double dist1Lat = (bookingPosStart.getLatitude() - vehicleDepotPos.getLatitude());
             double dist1Long = (bookingPosStart.getLongitude() - vehicleDepotPos.getLongitude());
@@ -101,7 +113,7 @@ public class Bookings
             return distanceCalculator(dist1Lat, dist1Long);
         }
 
-        public double calculateDistance2(PositionTracker bookingPosStart, PositionTracker bookingPosEnd)
+        private double calculateDistance2(PositionTracker bookingPosStart, PositionTracker bookingPosEnd)
         {
             double dist2Lat = (bookingPosEnd.getLatitude() - bookingPosStart.getLatitude());
             double dist2Long = (bookingPosEnd.getLongitude() - bookingPosStart.getLongitude());
@@ -109,7 +121,7 @@ public class Bookings
             return distanceCalculator(dist2Lat, dist2Long);
         }
 
-        public double calculateDistance3(PositionTracker bookingPosEnd, PositionTracker vehicleDepotPos)
+        private double calculateDistance3(PositionTracker bookingPosEnd, PositionTracker vehicleDepotPos)
         {
             double dist3Lat = (vehicleDepotPos.getLatitude() - bookingPosEnd.getLatitude());
             double dist3Long = (vehicleDepotPos.getLongitude() - bookingPosEnd.getLongitude());
@@ -117,7 +129,7 @@ public class Bookings
             return distanceCalculator(dist3Lat, dist3Long);
         }
 
-        public double distanceCalculator(double distLat, double distLong)
+        private double distanceCalculator(double distLat, double distLong)
         {
             double result = (distLat*distLat)+(distLong*distLong);
             return Math.sqrt(result);
@@ -125,32 +137,168 @@ public class Bookings
 
         // Printing the details of bookings
 
-        //if ( number <= 80 && number >= 1 ) {
-        //
-        //    char myChar = '*';
-        //
-        //    // This while loop will run 15 times if value of number is 15..
-        //    while(number > 0) {
-        //        System.out.println(myChar);
-        //        number--;   // Decrement the value of `number` by 1.
-        //    }
-        //}
+        private void printHeading()
+        {
+            System.out.printf("%-15s%-15s%-15s%-20s%-40s%-45s%s%n", "BookingID", "PassengerID", "VehicleID",
+                    "Date Booked", "Start Position", "End Position", "Cost");
+            for(int i=0; i<170; i++)
+            {
+                System.out.print('-');
+            }
+        }
 
         public void printBookingDetails()
         {
             System.out.println("Printing Booking Details: -\n");
-            System.out.printf("%-10s%-20s%-40s%-45s%s%n", "ID", "Date Booked", "Start Position", "End Position", "Cost");
-            for(int i=0; i<123; i++)
-            {
-                System.out.print('-');
-            }
+            printHeading();
+
             for (Booking booking : bookingsList)
             {
-
-                System.out.printf("%n%-10s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getBookingDate(),
-                        booking.getBookingStartPosition(),booking.getBookingEndPosition(),booking.getBookingCost());
+                System.out.printf("%n%-15s%-15s%-15s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getPassengerId(),
+                        booking.getVehicleId(),booking.getBookingDate(),booking.getBookingStartPosition(),
+                        booking.getBookingEndPosition(),booking.getBookingCost());
             }
+        }
 
+        public void currentPassengerBookings()
+        {
+            System.out.println("Printing Current Passenger bookings: -\n");
+            boolean futureBookings = false;
+            boolean heading = true;
+
+            for (Booking booking : bookingsList)
+            {
+                if(booking.getBookingDate().isAfter(LocalDate.now()))
+                {
+                    if(heading)
+                    {
+                        printHeading();
+                        heading=false;
+                    }
+                    System.out.printf("%n%-15s%-15s%-15s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getPassengerId(),
+                            booking.getVehicleId(),booking.getBookingDate(),booking.getBookingStartPosition(),
+                            booking.getBookingEndPosition(),booking.getBookingCost());
+                    futureBookings = true;
+                }
+                if(!futureBookings)
+                {
+                    System.out.println("No future bookings in system.");
+                    return;
+                }
+            }
+        }
+
+        // ISSUE -> ASSIGNING WRONG VEHICLE ID TO BOOKING
+        public void passengerBookingsDateTimeOrder(int passengerID)
+        {
+
+            System.out.println("Printing Passenger Bookings in DATE/TIME Order: -\n");
+            boolean heading = true;
+            boolean passengerHasBookings = false;
+
+            ArrayList<Booking> sortedByDateTime = new ArrayList<>();
+
+            for (Booking booking : bookingsList)
+            {
+                if(booking.getPassengerId() == passengerID)
+                {
+                    if(heading)
+                    {
+                        printHeading();
+                        heading=false;
+                    }
+                    sortedByDateTime.add(booking);
+                    passengerHasBookings=true;
+                }
+            }
+            if(!passengerHasBookings)
+            {
+                System.out.println("No bookings for passenger in system.");
+                return;
+            }
+            sortBookings(sortedByDateTime);
+        }
+
+        private void sortBookings(ArrayList<Booking> sortedBookings)
+        {
+            sortedBookings.sort(new CompareByDateTime());
+            for(Booking booking : sortedBookings)
+            {
+                displayBooking(booking);
+            }
+        }
+
+        private void displayBooking(Booking booking)
+        {
+            System.out.printf("%n%-15s%-15s%-15s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getPassengerId(),
+                    booking.getVehicleId(),booking.getBookingDate(),booking.getBookingStartPosition(),
+                    booking.getBookingEndPosition(),booking.getBookingCost());
+        }
+
+        // SEARCH BOOKINGS FOR VEHICLE ID TO SEE IF IT IS ALREADY BOOKED
+        public Booking searchBookingByVehicleID(int vehicleID)
+        {
+            int position = findBookingByVehicleID(vehicleID);
+            if(position >= 0)
+            {
+                return this.bookingsList.get(position);
+            }
+            return null;
+        }
+
+        public int searchBookingByVehicleID(Booking booking)
+        {
+            if(findBookingByVehicleID(booking) >= 0)
+            {
+                return booking.getVehicleId();
+            }
+            return -1;
+        }
+
+        private int findBookingByVehicleID(Booking booking)
+        {
+            return this.bookingsList.indexOf(booking);
+        }
+
+        private int findBookingByVehicleID(int vehicleID)
+        {
+            for (int i=0; i<this.bookingsList.size(); i++)
+            {
+                Booking booking = this.bookingsList.get(i);
+                if(booking.getVehicleId() == vehicleID)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public boolean isBooked(int vehicleID)
+        {
+            boolean booked = false;
+            for (Booking booking : bookingsList)
+            {
+                if (booking.getVehicleId() == vehicleID)
+                {
+                    booked = true;
+                    break;
+                }
+            }
+            return booked;
+        }
+
+        public double averageJourneyLength() {
+
+            double sumOfCost=0;
+            double distance=0.0;
+            int count = 0;
+            for (Booking booking : bookingsList)
+            {
+                count++;
+                sumOfCost += booking.getBookingCost();
+                distance += calculateDistance2(booking.getBookingStartPosition(), booking.getBookingEndPosition());
+            }
+            return (sumOfCost*distance)/count;
         }
 
 }

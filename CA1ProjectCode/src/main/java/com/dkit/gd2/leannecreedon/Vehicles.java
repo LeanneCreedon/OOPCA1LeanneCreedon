@@ -141,4 +141,62 @@ public class Vehicles {
         return -1;
     }
 
+
+    // SEARCHING ARRAYLIST FOR VEHICLE ID
+    public int searchVehicleByID(Vehicle vehicle)
+    {
+        if(findVehicleByID(vehicle) >= 0)
+        {
+            return vehicle.getId();
+        }
+        return -1;
+    }
+
+    public Vehicle searchVehicleByID(int vehicleID)
+    {
+        int position = findVehicleByID(vehicleID);
+        if(position >= 0)
+        {
+            return this.vehicleList.get(position);
+        }
+        return null;
+    }
+
+    private int findVehicleByID(Vehicle vehicle)
+    {
+        return this.vehicleList.indexOf(vehicle);
+    }
+
+    private int findVehicleByID(int vehicleID)
+    {
+        for (int i=0; i<this.vehicleList.size(); i++)
+        {
+            Vehicle vehicle = this.vehicleList.get(i);
+            if(vehicle.getId()==vehicleID)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void printVehiclesOfType(String type) {
+
+        System.out.println("Printing Vehicles of given type: -\n");
+        System.out.printf("%-10s%-10s%-10s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", "ID", "Type", "Make", "Model", "MilesPerKWh", "Reg_num",
+                "CostPerMile", "Last Serviced", "Mileage", "Vehicle Depot");
+        for(int i=0; i<170; i++)
+        {
+            System.out.print('-');
+        }
+        for (Vehicle vehicle : vehicleList)
+        {
+            if(vehicle.getType().equals(type))
+            {
+                System.out.printf("%n%-10s%-10s%-10s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", vehicle.getId(),vehicle.getType(),
+                        vehicle.getMake(),vehicle.getModel(),vehicle.getMilesPerKWh(),vehicle.getRegistrationNumber(), vehicle.getCostPerMile(),
+                        vehicle.getLastServicedDate(), vehicle.getMileage(), vehicle.getVehicleDepotPosition());
+            }
+        }
+    }
 }

@@ -1,6 +1,9 @@
 package com.dkit.gd2.leannecreedon;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -16,6 +19,8 @@ public class App
 
     public static void main(String[] args)
     {
+        //bookings.printHeading();
+        //bookings.printBookingDetails();
         System.out.println("Welcome to Tesla Co. Booking system");
         mainMenu();
     }
@@ -77,10 +82,10 @@ public class App
                     bookings.printBookingDetails();
                     break;
                 case SEARCH_BY_SEAT_NUM:
-                    //vehicles.searchBySeatNum();
+                    searchByType();
                     break;
                 case AVERAGE_LENGTH_BOOKING_JOURNEYS:
-                    //vehicles.averageJourneyLength();
+                    displayAvgJourneyLength();
                     break;
                 case BACK_TO_MAIN_MENU:
                     mainMenu();
@@ -116,10 +121,10 @@ public class App
                     passengersList.printPassengerDetails();
                     break;
                 case CURRENT_PASSENGER_BOOKINGS:
-                    //passengersList.currentPassengerBookings();
+                    bookings.currentPassengerBookings();
                     break;
                 case PASSENGER_BOOKINGS_DATETIME_ORDER:
-                    //passengersList.passengerBookingsDateTimeOrder();
+                    passengerBookingsDateTimeOrder();
                     break;
                 case BACK_TO_MAIN_MENU:
                     mainMenu();
@@ -142,7 +147,7 @@ public class App
                             + "2 - edit booking\n"
                             + "3 - delete booking\n"
                             + "4 - print all booking details\n"
-                            + "5 - search vehicles by number of seats\n"
+                            + "5 - search vehicles by type\n"
                             + "6 - average length of booking journeys\n"
                             + "7 - main menu");
 
@@ -163,17 +168,22 @@ public class App
 
     // Passenger Menu Methods
 
-    public static void addPassenger()
+    private static void addPassenger()
     {
-        // Creating new Passenger and adding them to the ArrayList(passengerList)
         String name = getUserInput("Enter passenger name: ");
+        Passenger existingPassengerRecord = passengersList.searchPassenger(name);
+        if(existingPassengerRecord != null)
+        {
+            System.out.println("Passenger already in system");
+            return;
+        }
         IDSystem id = IDSystem.getInstance("idSystem.txt");
         String email = getUserInput("Enter email address: ");
         String telephone = getUserInput("Enter phone number: ");
         PositionTracker homePos = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
 
-        System.out.println("Got all passenger data. Creating new passenger");
         Passenger newPassenger = Passenger.createNewPassenger(name, id, email, telephone, homePos);
+        System.out.println("Got all passenger data. Creating new passenger");
         passengersList.addNewPassenger(newPassenger);
         //Passenger.writeNewPassenger(newPassenger);
     }
@@ -203,6 +213,7 @@ public class App
         {
             System.out.println("Could not update passenger");
         }
+
     }
 
     private static void removePassenger() {
@@ -217,10 +228,24 @@ public class App
         passengersList.removePassenger(existingPassengerRecord);
     }
 
+    private static void passengerBookingsDateTimeOrder()
+    {
+        String name = getUserInput("Please enter Passenger name: ");
+        Passenger existingPassengerRecord = passengersList.searchPassenger(name);
+        if(existingPassengerRecord == null)
+        {
+            System.out.println("Passenger is not on system");
+            return;
+        }
+
+        bookings.passengerBookingsDateTimeOrder(existingPassengerRecord.getID());
+    }
+
     // Booking Menu Methods
 
-    public static void addNewBooking()
+    private static void addNewBooking()
     {
+        // SEARCH BY TYPE
         String vehicleType = getUserInput("Please enter vehicle type: ");
         Vehicle existingVehicleRecord = vehicles.searchVehicle(vehicleType);
         if(existingVehicleRecord == null)
@@ -228,6 +253,27 @@ public class App
             System.out.println("Vehicle not found");
             return;
         }
+        // SEARCH BY ID
+        int vehicleID = getUserInputInteger("Please enter vehicle ID: ");
+        if(vehicles.searchVehicleByID(vehicleID) == null)
+        {
+            System.out.println("Vehicle not found");
+            return;
+        }
+        // CHECK IF ID MATCHES TYPE
+        if(!(vehicles.searchVehicleByID(vehicleID).getType()).equals(existingVehicleRecord.getType()))
+        {
+            System.out.println("Could not find a vehicle type with chosen vehicle ID");
+            return;
+        }
+        // CHECK IF VEHICLE IS ALREADY BOOKED
+        boolean existingBookingRecord = bookings.isBooked(vehicleID);
+        if(existingBookingRecord)
+        {
+            System.out.println("Vehicle, " + vehicleID + " is already booked");
+            return;
+        }
+        // SEARCH FOR PASSENGER
         String passengerName = getUserInput("Please enter passenger name: ");
         Passenger existingPassengerRecord = passengersList.searchPassenger(passengerName);
         if(existingPassengerRecord == null)
@@ -235,7 +281,8 @@ public class App
             System.out.println("Passenger not found");
             return;
         }
-        int vehicleID = existingVehicleRecord.getId();
+        // CREATE BOOKING
+        int chosenVehicleID = existingVehicleRecord.getId();
         int passengerID = existingPassengerRecord.getID();
 
         IDSystem bookingId = IDSystem.getInstance("idSystem.txt");
@@ -247,15 +294,14 @@ public class App
         PositionTracker bookingPosEnd = new PositionTracker(getUserInputDouble("Enter latitude: "),getUserInputDouble("Enter longitude: "));
         PositionTracker vehicleDepotPos = vehicles.searchVehicleDepot(existingVehicleRecord);
         double price = bookings.calculatePrice(bookingPosStart, bookingPosEnd, vehicleDepotPos);
-
+        Booking newBooking = Booking.createNewBooking(passengerID,chosenVehicleID, bookingId, date, bookingPosStart, bookingPosEnd, price);
         System.out.println("Got all booking data. Creating new booking");
-        Booking newBooking = Booking.createNewBooking(vehicleID, passengerID, bookingId, date, bookingPosStart, bookingPosEnd, price);
         bookings.addNewBooking(newBooking);
     }
 
 
 
-    public static void editBooking()
+    private static void editBooking()
     {
         int id = getUserInputInteger("Enter existing booking ID: ");
         Booking existingBookingRecord = bookings.searchBooking(id);
@@ -294,7 +340,7 @@ public class App
         }
     }
 
-    public static void deleteBooking()
+    private static void deleteBooking()
     {
         int id = getUserInputInteger("Enter bookingID to remove: ");
         Booking existingBookingRecord = bookings.searchBooking(id);
@@ -306,20 +352,28 @@ public class App
         bookings.removeBooking(existingBookingRecord);
     }
 
-    public static void searchBySeatNum()
+    private static void searchByType()
     {
-        System.out.println("SEARCH BOOKING BY SEAT NUM");
+        String vehicleType = getUserInput("Please enter vehicle type: ");
+        Vehicle existingVehicleRecord = vehicles.searchVehicle(vehicleType);
+        if(existingVehicleRecord == null)
+        {
+            System.out.println("Vehicles of type not found.");
+            return;
+        }
+        vehicles.printVehiclesOfType(vehicleType);
     }
 
-    public static void averageJourneyLength()
+    private static void displayAvgJourneyLength()
     {
-        System.out.println("AVERAGE BOOKING JOURNEY LENGTH");
+        System.out.println("Printing average bookings Journey length: \n");
+        System.out.printf("%s%.2f%s%n","=> ",bookings.averageJourneyLength(), " miles.");
     }
 
 
     // Get user input
 
-    public static String getUserInput(String message)
+    private static String getUserInput(String message)
     {
         System.out.println(message);
         return keyboard.nextLine();
@@ -331,7 +385,7 @@ public class App
         return Double.parseDouble(keyboard.nextLine());
     }
 
-    public static int getUserInputInteger(String message)
+    private static int getUserInputInteger(String message)
     {
         System.out.println(message);
         return Integer.parseInt(keyboard.nextLine());
