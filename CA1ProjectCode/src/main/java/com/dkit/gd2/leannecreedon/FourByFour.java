@@ -4,7 +4,8 @@ package com.dkit.gd2.leannecreedon;
 public class FourByFour extends Vehicle {
 
     /* Attributes */
-    private int numberOfSeats;
+    private final int numberOfSeats;
+
 
     // Constructors
     public FourByFour(String type, String make, String model, double milesPerKWh, String registrationNumber,
@@ -16,7 +17,6 @@ public class FourByFour extends Vehicle {
         this.numberOfSeats = numberOfSeats;
     }
 
-
     public FourByFour(int id, String type, String make, String model, double milesPerKWh, String registrationNumber,
                double costPerMile, int year, int month, int day, int mileage, double latitude,
                double longitude, int numberOfSeats)
@@ -26,10 +26,12 @@ public class FourByFour extends Vehicle {
         this.numberOfSeats = numberOfSeats;
     }
 
+    // Getter
     public int getNumberOfSeats() {
         return numberOfSeats;
     }
 
+    // ToString
     @Override
     public String toString() {
         return "FourByFour{" +

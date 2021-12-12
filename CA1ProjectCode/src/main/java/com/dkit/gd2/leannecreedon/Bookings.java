@@ -1,38 +1,97 @@
 package com.dkit.gd2.leannecreedon;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class Bookings
 {
+        // Bookings manager class to handle loading, writing along with calculations and menu methods.
+
         private ArrayList<Booking> bookingsList = new ArrayList<Booking>();
-        private Passengers passengers;
-        private Vehicles vehicles;
 
-        public Bookings() {
+        public Bookings(String nameOfFile) {
             this.bookingsList = new ArrayList<>();
-        }
-
-        public Bookings(Passengers passengers, Vehicles vehicles) {
-            this.bookingsList = new ArrayList<>();
-            this.passengers = passengers;
-            this.vehicles = vehicles;
+            loadBookingFromFile(nameOfFile);
         }
 
         public ArrayList<Booking> getBookingsList() {
             return bookingsList;
         }
 
-        public boolean addNewBooking(Booking newBooking)
+        // Loading bookings from bookings.txt file
+        private void loadBookingFromFile(String filename)
+        {
+            try
+            {
+                Scanner keyboard = new Scanner(new File(filename));
+                keyboard.useDelimiter("[,\r\n]+");
+
+                while (keyboard.hasNext()) {
+
+                    int passengerId = keyboard.nextInt();
+                    int vehicleId = keyboard.nextInt();
+                    int bookingId = keyboard.nextInt();
+                    int year = keyboard.nextInt();
+                    int month = keyboard.nextInt();
+                    int day = keyboard.nextInt();
+                    double startLat = keyboard.nextDouble();
+                    double startLong = keyboard.nextDouble();
+                    double endLat = keyboard.nextDouble();
+                    double endLong = keyboard.nextDouble();
+                    double bookingCost = keyboard.nextDouble();
+
+                    LocalDate date = LocalDate.of(year, month,day);
+                    PositionTracker startPos = new PositionTracker(startLat, startLong);
+                    PositionTracker endPos = new PositionTracker(endLat, endLong);
+
+                    bookingsList.add(new Booking(passengerId, vehicleId, bookingId, date, startPos, endPos, bookingCost));
+                }
+                keyboard.close();
+
+            }
+            catch (IOException e)
+            {
+                System.out.println("Exception thrown. " + e);
+            }
+        }
+
+
+        // Writing user input bookings to bookings.txt file
+        public void writeBookings()
+        {
+            try (BufferedWriter bookingFile = new BufferedWriter(new FileWriter("bookings.txt")))
+            {
+                for (Booking booking : bookingsList) {
+                    bookingFile.write(booking.getPassengerId() + "," + booking.getVehicleId() + "," +
+                            booking.getBookingId() + "," + booking.getBookingDate().getYear() + "," + booking.getBookingDate().getMonthValue()
+                            + "," + booking.getBookingDate().getDayOfMonth() + "," + booking.getBookingStartPosition().getLatitude()
+                            + "," + booking.getBookingStartPosition().getLongitude() + "," + booking.getBookingEndPosition().getLatitude()
+                            + "," + booking.getBookingEndPosition().getLongitude()
+                            + "," + booking.getBookingCost() + "\n");
+                }
+            }
+            catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+            }
+        }
+
+
+        /* Booking menu - checks and calculation methods */
+
+        public void addNewBooking(Booking newBooking)
         {
             if(findBooking(newBooking.getVehicleId()) >= 0)
             {
-                return true;
+                return;
             }
             bookingsList.add(newBooking);
-            return false;
+            writeBookings();
         }
 
         public boolean updateBooking(Booking oldBooking, Booking newBooking)
@@ -40,24 +99,25 @@ public class Bookings
             int foundPosition = findBooking(oldBooking);
             if(foundPosition < 0)
             {
-                System.out.println(oldBooking.getBookingId() + ", was not found");
+                System.out.println(Colours.RED + oldBooking.getBookingId() + ", was not found" + Colours.RESET);
                 return false;
             }
             this.bookingsList.set(foundPosition, newBooking);
+            writeBookings();
             return true;
         }
 
-        public boolean removeBooking(Booking booking)
+        public void removeBooking(Booking booking)
         {
             int foundPosition = findBooking(booking);
             if(foundPosition < 0)
             {
-                System.out.println(booking.getBookingId() + ", was not found");
-                return false;
+                System.out.println(Colours.RED + booking.getBookingId() + ", was not found" + Colours.RESET);
+                return;
             }
             this.bookingsList.remove(foundPosition);
-            System.out.println(booking.getBookingId() + ", was deleted");
-            return true;
+            System.out.println(Colours.GREEN + booking.getBookingId() + ", was deleted" + Colours.RESET);
+            writeBookings();
         }
 
         private int findBooking(Booking booking)
@@ -149,14 +209,21 @@ public class Bookings
 
         public void printBookingDetails()
         {
-            System.out.println("Printing Booking Details: -\n");
-            printHeading();
-
-            for (Booking booking : bookingsList)
+            if(!(bookingsList.isEmpty()))
             {
-                System.out.printf("%n%-15s%-15s%-15s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getPassengerId(),
-                        booking.getVehicleId(),booking.getBookingDate(),booking.getBookingStartPosition(),
-                        booking.getBookingEndPosition(),booking.getBookingCost());
+                System.out.println("Printing Booking Details: -\n");
+                printHeading();
+
+                for (Booking booking : bookingsList)
+                {
+                    System.out.printf("%n%-15s%-15s%-15s%-20s%-40s%-45s%.2f%n", booking.getBookingId(),booking.getPassengerId(),
+                            booking.getVehicleId(),booking.getBookingDate(),booking.getBookingStartPosition(),
+                            booking.getBookingEndPosition(),booking.getBookingCost());
+                }
+            }
+            else
+            {
+                System.out.println(Colours.RED + "No Bookings on the system." + Colours.RESET);
             }
         }
 
@@ -180,21 +247,17 @@ public class Bookings
                             booking.getBookingEndPosition(),booking.getBookingCost());
                     futureBookings = true;
                 }
-                if(!futureBookings)
-                {
-                    System.out.println("No future bookings in system.");
-                    return;
-                }
+            }
+            if(!futureBookings)
+            {
+                System.out.println(Colours.RED + "No future bookings in system." + Colours.RESET);
             }
         }
 
-        // ISSUE -> ASSIGNING WRONG VEHICLE ID TO BOOKING
         public void passengerBookingsDateTimeOrder(int passengerID)
         {
-
             System.out.println("Printing Passenger Bookings in DATE/TIME Order: -\n");
             boolean heading = true;
-            boolean passengerHasBookings = false;
 
             ArrayList<Booking> sortedByDateTime = new ArrayList<>();
 
@@ -208,13 +271,7 @@ public class Bookings
                         heading=false;
                     }
                     sortedByDateTime.add(booking);
-                    passengerHasBookings=true;
                 }
-            }
-            if(!passengerHasBookings)
-            {
-                System.out.println("No bookings for passenger in system.");
-                return;
             }
             sortBookings(sortedByDateTime);
         }
@@ -235,7 +292,7 @@ public class Bookings
                     booking.getBookingEndPosition(),booking.getBookingCost());
         }
 
-        // SEARCH BOOKINGS FOR VEHICLE ID TO SEE IF IT IS ALREADY BOOKED
+        // SEARCH BOOKINGS FOR VEHICLE ID
         public Booking searchBookingByVehicleID(int vehicleID)
         {
             int position = findBookingByVehicleID(vehicleID);
@@ -272,6 +329,46 @@ public class Bookings
             }
             return -1;
         }
+
+
+        // SEARCH BOOKINGS FOR PASSENGER ID TO SEE THEY HAVE A BOOKING
+        public Booking searchBookingByPassengerID(int passengerID)
+        {
+            int position = findBookingByPassengerID(passengerID);
+            if(position >= 0)
+            {
+                return this.bookingsList.get(position);
+            }
+            return null;
+        }
+
+        public int searchBookingByPassengerID(Booking booking)
+        {
+            if(findBookingByPassengerID(booking) >= 0)
+            {
+                return booking.getPassengerId();
+            }
+            return -1;
+        }
+
+        private int findBookingByPassengerID(Booking booking)
+        {
+            return this.bookingsList.indexOf(booking);
+        }
+
+        private int findBookingByPassengerID(int passengerID)
+        {
+            for (int i=0; i<this.bookingsList.size(); i++)
+            {
+                Booking booking = this.bookingsList.get(i);
+                if(booking.getPassengerId() == passengerID)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
 
         public boolean isBooked(int vehicleID)
         {

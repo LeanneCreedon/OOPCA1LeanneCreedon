@@ -4,7 +4,7 @@ package com.dkit.gd2.leannecreedon;
 public class Car extends Vehicle {
 
     /* Attributes */
-    private int numberOfSeats;
+    private final int numberOfSeats;
 
 
     // Constructors
@@ -27,10 +27,12 @@ public class Car extends Vehicle {
         this.numberOfSeats = numberOfSeats;
     }
 
+    // Getter
     public int getNumberOfSeats() {
         return numberOfSeats;
     }
 
+    // ToString
     @Override
     public String toString() {
         return "Car{" +

@@ -1,16 +1,13 @@
 package com.dkit.gd2.leannecreedon;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Vehicles {
 
-    // VehicleManager class to handle loading the vehicles from a text file.
+    /* VehicleManager class to handle loading the vehicles from a text file. */
 
     private final ArrayList<Vehicle> vehicleList;
 
@@ -29,6 +26,7 @@ public class Vehicles {
         }
     }
 
+    // Loading vehicles from vehicles.txt file
     public void loadVehiclesFromFile(String fileName)
     {
         try
@@ -91,7 +89,7 @@ public class Vehicles {
     }
 
 
-    // Menu Methods Other versions
+    /* Passenger menu methods - checks and calculations */
 
     // Search for depot pos
     public PositionTracker searchVehicleDepot(Vehicle vehicle)
@@ -180,10 +178,11 @@ public class Vehicles {
         return -1;
     }
 
+    // Printing out Vehicles of given type
     public void printVehiclesOfType(String type) {
 
         System.out.println("Printing Vehicles of given type: -\n");
-        System.out.printf("%-10s%-10s%-10s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", "ID", "Type", "Make", "Model", "MilesPerKWh", "Reg_num",
+        System.out.printf("%-10s%-15s%-15s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", "ID", "Type", "Make", "Model", "MilesPerKWh", "Reg_num",
                 "CostPerMile", "Last Serviced", "Mileage", "Vehicle Depot");
         for(int i=0; i<170; i++)
         {
@@ -193,7 +192,7 @@ public class Vehicles {
         {
             if(vehicle.getType().equals(type))
             {
-                System.out.printf("%n%-10s%-10s%-10s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", vehicle.getId(),vehicle.getType(),
+                System.out.printf("%n%-10s%-15s%-15s%-15s%-17s%-17s%-17s%-20s%-15s%s%n", vehicle.getId(),vehicle.getType(),
                         vehicle.getMake(),vehicle.getModel(),vehicle.getMilesPerKWh(),vehicle.getRegistrationNumber(), vehicle.getCostPerMile(),
                         vehicle.getLastServicedDate(), vehicle.getMileage(), vehicle.getVehicleDepotPosition());
             }

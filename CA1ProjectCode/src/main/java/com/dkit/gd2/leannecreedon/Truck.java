@@ -1,12 +1,10 @@
 package com.dkit.gd2.leannecreedon;
 
 
-
 public class Truck extends Vehicle {
 
     /* Attributes */
-
-    private double loadSpace;
+    private final double loadSpace;
 
     // Constructors
     public Truck(String type, String make, String model, double milesPerKWh, String registrationNumber,
@@ -18,7 +16,6 @@ public class Truck extends Vehicle {
         this.loadSpace = loadSpace;
     }
 
-
     public Truck(int id, String type, String make, String model, double milesPerKWh, String registrationNumber,
                double costPerMile, int year, int month, int day, int mileage, double latitude,
                double longitude, double loadSpace)
@@ -28,11 +25,13 @@ public class Truck extends Vehicle {
         this.loadSpace = loadSpace;
     }
 
+    // Getter
     public double getLoadSpace()
     {
         return loadSpace;
     }
 
+    // ToString
     @Override
     public String toString() {
         return "Truck{" +

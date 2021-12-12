@@ -3,16 +3,18 @@ package com.dkit.gd2.leannecreedon;
 
 public class Passenger implements Comparable<Passenger>
 {
+    // Passenger class to create a passenger
+
+    private final IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
     /* Attributes */
 
-    private String name;
-    private int id;
-    private String email;
-    private String telephone;
-    private PositionTracker homePosition;
+    private final String name;
+    private final int id;
+    private final String email;
+    private final String telephone;
+    private final PositionTracker homePosition;
 
-    private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
     // Constructor
 
@@ -56,29 +58,18 @@ public class Passenger implements Comparable<Passenger>
         return homePosition;
     }
 
+    // Creating new Passenger
     public static Passenger createNewPassenger(String name, IDSystem id, String email, String telephone, PositionTracker homePosition)
     {
         return new Passenger(name, id, email, telephone, homePosition);
     }
 
-    // Writing user input passengers to passengers.txt file
-//    public static Passengers writeNewPassenger(Passenger passengersList)
-//    {
-//        try (BufferedWriter passengerFile = new BufferedWriter(new FileWriter("passengers.txt")))
-//        {
-//            for (Passenger passenger : this.passengersList)
-//            {
-//                passengerFile.write(passenger.getName() + "," + passenger.getID() + "," +
-//                        passenger.getEmail() + "," + passenger.getTelephone() + "," + passenger.getHomePosition());
-//
-//            }
-//        }
-//        catch(IOException ioe)
-//        {
-//            ioe.printStackTrace();
-//        }
-//        return null;
-//    }
+    // Updating Passenger
+    public static Passenger updatePassenger(String name, int id, String email, String telephone, PositionTracker homePosition)
+    {
+        return new Passenger(name, id, email, telephone, homePosition);
+    }
+
 
     // Implements Comparable Method
 

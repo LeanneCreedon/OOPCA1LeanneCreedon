@@ -5,19 +5,21 @@ import java.time.LocalDate;
 
 public class Booking  {
 
-    private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
+    /* Booking class to create a booking */
+
+    private final IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
     /* Attributes */
 
     private int passengerId;
     private int vehicleId;
-    private int bookingId;
-    private LocalDate bookingDate;
-    private PositionTracker bookingStartPosition;
-    private PositionTracker bookingEndPosition;
-    private double bookingCost;
+    private final int bookingId;
+    private final LocalDate bookingDate;
+    private final PositionTracker bookingStartPosition;
+    private final PositionTracker bookingEndPosition;
+    private final double bookingCost;
 
-    // Constructor
+    // Constructors
 
     public Booking(int passengerId, int vehicleId, IDSystem bookingId, LocalDate bookingDate, PositionTracker bookingStartPosition,
                    PositionTracker bookingEndPosition, double bookingCost)
@@ -89,6 +91,9 @@ public class Booking  {
         return bookingCost;
     }
 
+
+    // Creating booking
+
     public static Booking createNewBooking(int passengerID, int vehicleID, IDSystem bookingID,
                                            LocalDate bookingDate, PositionTracker bookingStartPosition,
                                            PositionTracker bookingEndPosition, double bookingCost)
@@ -96,15 +101,17 @@ public class Booking  {
         return new Booking(passengerID, vehicleID, bookingID, bookingDate, bookingStartPosition, bookingEndPosition, bookingCost);
     }
 
-    public static Booking updateBooking(int bookingID, LocalDate bookingDate, PositionTracker bookingStartPosition,
-                                           PositionTracker bookingEndPosition, double bookingCost)
+
+    // Updating booking
+
+    public static Booking updateBooking(int passengerId, int vehicleId, int bookingID, LocalDate bookingDate, PositionTracker bookingStartPosition,
+                                        PositionTracker bookingEndPosition, double bookingCost)
     {
-        return new Booking(bookingID, bookingDate, bookingStartPosition, bookingEndPosition, bookingCost);
+        return new Booking(passengerId, vehicleId, bookingID, bookingDate, bookingStartPosition, bookingEndPosition, bookingCost);
     }
 
 
     // ToString Method
-
 
     @Override
     public String toString() {

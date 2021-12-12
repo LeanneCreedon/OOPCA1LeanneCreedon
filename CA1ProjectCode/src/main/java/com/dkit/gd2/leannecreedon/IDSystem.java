@@ -12,10 +12,9 @@ import java.util.Scanner;
 public class IDSystem {
 
     /* Attributes */
-
     private static IDSystem idSystem;
     private int nextId;
-    private String fileName;
+    private final String fileName;
 
     private IDSystem(String fileName)
     {
@@ -40,7 +39,6 @@ public class IDSystem {
     }
 
     // Get instance of the class
-
     public static IDSystem getInstance(String fileName)
     {
         if (idSystem == null)
@@ -50,8 +48,7 @@ public class IDSystem {
         return idSystem;
     }
 
-    // Return id and save to file
-
+    // Returning ID and saving it to file
     public int getNextId()
     {
         File file = new File(fileName);
@@ -79,4 +76,11 @@ public class IDSystem {
         return nextId++;
     }
 
+    public static IDSystem getIdSystem() {
+        return idSystem;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
 }

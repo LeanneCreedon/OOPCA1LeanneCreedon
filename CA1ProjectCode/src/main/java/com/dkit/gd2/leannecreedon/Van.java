@@ -1,12 +1,11 @@
 package com.dkit.gd2.leannecreedon;
 
 
-
 public class Van extends Vehicle {
 
     /* Attributes */
 
-    private double loadSpace;
+    private final double loadSpace;
 
     // Constructors
     public Van(String type, String make, String model, double milesPerKWh, String registrationNumber,
@@ -28,10 +27,12 @@ public class Van extends Vehicle {
         this.loadSpace = loadSpace;
     }
 
+    // Getter
     public double getLoadSpace() {
         return loadSpace;
     }
 
+    // ToString
     @Override
     public String toString() {
         return "Van{" +

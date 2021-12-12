@@ -5,21 +5,23 @@ import java.time.LocalDate;
 
 public class Vehicle {
 
-    private IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
+    /* Vehicle class to create a vehicle object. */
+
+    private final IDSystem idSystem = IDSystem.getInstance("idSystem.txt");
 
     /* Attributes */
-    private int id;
-    private String type;
-    private String make;
-    private String model;
-    private double milesPerKWh;
-    private String registrationNumber;
-    private double costPerMile;
-    private LocalDate lastServicedDate;
-    private int mileage;
-    private PositionTracker vehicleDepotPosition;
+    private final int id;
+    private final String type;
+    private final String make;
+    private final String model;
+    private final double milesPerKWh;
+    private final String registrationNumber;
+    private final double costPerMile;
+    private final LocalDate lastServicedDate;
+    private final int mileage;
+    private final PositionTracker vehicleDepotPosition;
 
-    // Constructor
+    // Constructors
 
     public Vehicle(String type, String make, String model, double milesPerKWh, String registrationNumber,
                    double costPerMile, int year, int month, int day, int mileage, double latitude, double longitude)
@@ -93,6 +95,7 @@ public class Vehicle {
         return vehicleDepotPosition;
     }
 
+    // ToString
 
     @Override
     public String toString() {
